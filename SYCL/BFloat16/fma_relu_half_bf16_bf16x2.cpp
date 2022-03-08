@@ -256,7 +256,7 @@ int main() {
     for (int i = 0; i < N; i++) {
       a[i] = i / (half)N;
       b[i] = (N - i) / (half)N;
-      c[i] = -i / 2 * (half)N;
+      c[i] = -i / 4 / (half)N;
     }
     TEST_BUILTIN(sycl::ext::oneapi::experimental::fma_relu, HALF);
   }
@@ -267,7 +267,7 @@ int main() {
     for (int i = 0; i < N; i++) {
       a[i] = make_bf16(i / (float)N);
       b[i] = make_bf16((N - i) / (float)N);
-      c[i] = make_bf16(-i / 10 * (float)N);
+      c[i] = make_bf16(-i / 4 / (float)N);
     }
     TEST_BUILTIN(sycl::ext::oneapi::experimental::fma_relu, BF16);
     TEST_BUILTIN(sycl::ext::oneapi::experimental::fma_relu, BF16X2);
