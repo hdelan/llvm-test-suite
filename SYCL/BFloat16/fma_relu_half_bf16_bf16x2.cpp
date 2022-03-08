@@ -152,7 +152,7 @@ bool compare_fma_relu_bf16x2(uint32_t a, uint32_t b, uint32_t c, uint32_t d) {
     });                                                                        \
   }                                                                            \
   for (int i = 0; i < N; i++) {                                                \
-    assert(compare_fma_relu_bf16x2(a[i], b[i], c[i], d[i]));                   \
+    assert(compare_fma_relu_bf16(a[i], b[i], c[i], d[i]));                     \
   }
 
 #define TEST_BUILTIN_BF16_VEC3_IMPL(NAME)                                      \
@@ -173,7 +173,7 @@ bool compare_fma_relu_bf16x2(uint32_t a, uint32_t b, uint32_t c, uint32_t d) {
   }                                                                            \
   for (int i = 0; i < N; i++) {                                                \
     if (i % 4 != 3) {                                                          \
-      assert(compare_fma_relu_bf16x2(a[i], b[i], c[i], d[i]));                 \
+      assert(compare_fma_relu_bf16(a[i], b[i], c[i], d[i]));                   \
     }                                                                          \
   }
 
