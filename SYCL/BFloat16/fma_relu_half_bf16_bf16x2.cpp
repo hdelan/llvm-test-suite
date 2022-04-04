@@ -1,4 +1,4 @@
-// RUN: %clangxx -fsycl -fsycl-targets=%sycl_triple %s -o %t.out -Xsycl-target-backend --cuda-gpu-arch=sm_80
+// RUN: %clangxx -fsycl -fsycl-targets=%sycl_triple %s -o %t.out -Xsycl-target-backend --cuda-gpu-arch=sm_80 
 // RUN: %GPU_RUN_PLACEHOLDER %t.out
 //
 // Only cuda backend implements bf16
@@ -9,42 +9,46 @@
 constexpr int N = 32; // All vector sizes divide this
 
 using namespace sycl;
+using sycl::ext::oneapi::experimental::bfloat16;
 
-float make_fp32(uint16_t x) {
-  uint32_t y = x;
+float make_fp32(bfloat16 x) {
+  uint32_t y = reinterpret_cast<bfloat16 &>(x);
   y = y << 16;
-  float *res = reinterpret_cast<float *>(&y);
-  return *res;
+  float res = reinterpret_cast<float &>(y);
+  return res;
 }
 
-uint16_t make_bf16(float x) {
-  uint32_t *res = reinterpret_cast<uint32_t *>(&x);
-  *res = *res >> 16;
-  return (uint16_t)*res;
+bfloat16 make_bf16(float x) {
+  uint32_t res = reinterpret_cast<uint32_t &>(x);
+  res = res >> 16;
+  return reinterpret_cast<bfloat16 &>(res);
 }
 
-bool compare_fma_relu_bf16(uint16_t a, uint16_t b, uint16_t c, uint16_t d) {
-  uint32_t a_tmp = a, b_tmp = b, c_tmp = c, d_tmp = d;
+bool compare_fma_relu_bf16(bfloat16 a, bfloat16 b, bfloat16 c, bfloat16 d) {
+  uint32_t a_tmp = reinterpret_cast<uint16_t &>(a),
+           b_tmp = reinterpret_cast<uint16_t &>(b),
+           c_tmp = reinterpret_cast<uint16_t &>(c),
+           d_tmp = reinterpret_cast<uint16_t &>(d);
   a_tmp <<= 16;
   b_tmp <<= 16;
   c_tmp <<= 16;
   d_tmp <<= 16;
-  float *a_ptr = reinterpret_cast<float *>(&a_tmp),
-        *b_ptr = reinterpret_cast<float *>(&b_tmp),
-        *c_ptr = reinterpret_cast<float *>(&c_tmp),
-        *d_ptr = reinterpret_cast<float *>(&d_tmp);
-  float tmp_ret = std::fma(*a_ptr, *b_ptr, *c_ptr);
-  tmp_ret = tmp_ret > 0 ? tmp_ret : 0;
+  float a_float = reinterpret_cast<float &>(a_tmp),
+        b_float = reinterpret_cast<float &>(b_tmp),
+        c_float = reinterpret_cast<float &>(c_tmp),
+        d_float = reinterpret_cast<float &>(d_tmp);
+  float d_cmp = std::fma(a_float, b_float, c_float);
+  d_cmp = d_cmp > 0 ? d_cmp : 0;
 
-  return fabs(tmp_ret - *d_ptr) <=
-         8 * fabs(*d_ptr) * std::numeric_limits<cl::sycl::half>::epsilon();
+  return fabs(d_float - d_cmp) <=
+         8 * fabs(d_cmp) * std::numeric_limits<cl::sycl::half>::epsilon();
 }
 
 bool compare_fma_relu_bf16x2(uint32_t a, uint32_t b, uint32_t c, uint32_t d) {
-  uint16_t *a_beg = reinterpret_cast<uint16_t *>(&a),
-           *b_beg = reinterpret_cast<uint16_t *>(&b),
-           *c_beg = reinterpret_cast<uint16_t *>(&c),
-           *d_beg = reinterpret_cast<uint16_t *>(&d);
+  bfloat16 *a_beg = reinterpret_cast<bfloat16 *>(&a),
+           *b_beg = reinterpret_cast<bfloat16 *>(&b),
+           *c_beg = reinterpret_cast<bfloat16 *>(&c),
+           *d_beg = reinterpret_cast<bfloat16 *>(&d);
   return compare_fma_relu_bf16(*a_beg, *b_beg, *c_beg, *d_beg) &&
          compare_fma_relu_bf16(*(a_beg + 1), *(b_beg + 1), *(c_beg + 1),
                                *(d_beg + 1));
@@ -115,12 +119,14 @@ bool compare_fma_relu_bf16x2(uint32_t a, uint32_t b, uint32_t c, uint32_t d) {
     }                                                                          \
   }
 
+// There are currently no vec types implemented for the bfloat16 class
+// TODO: test vec types once implemented
 #define TEST_BUILTIN_BF16_SCAL_IMPL(NAME)                                      \
   {                                                                            \
-    buffer<uint16_t> a_buf(&a[0], N);                                          \
-    buffer<uint16_t> b_buf(&b[0], N);                                          \
-    buffer<uint16_t> c_buf(&c[0], N);                                          \
-    buffer<uint16_t> d_buf(&d[0], N);                                          \
+    buffer<bfloat16> a_buf(&a[0], N);                                          \
+    buffer<bfloat16> b_buf(&b[0], N);                                          \
+    buffer<bfloat16> c_buf(&c[0], N);                                          \
+    buffer<bfloat16> d_buf(&d[0], N);                                          \
     q.submit([&](handler &cgh) {                                               \
       auto A = a_buf.get_access<access::mode::read>(cgh);                      \
       auto B = b_buf.get_access<access::mode::read>(cgh);                      \
@@ -133,48 +139,6 @@ bool compare_fma_relu_bf16x2(uint32_t a, uint32_t b, uint32_t c, uint32_t d) {
   }                                                                            \
   for (int i = 0; i < N; i++) {                                                \
     assert(compare_fma_relu_bf16(a[i], b[i], c[i], d[i]));                     \
-  }
-
-#define TEST_BUILTIN_BF16_VEC_IMPL(NAME, SZ)                                   \
-  {                                                                            \
-    buffer<ushort##SZ> a_buf((ushort##SZ *)&a[0], N / SZ);                     \
-    buffer<ushort##SZ> b_buf((ushort##SZ *)&b[0], N / SZ);                     \
-    buffer<ushort##SZ> c_buf((ushort##SZ *)&c[0], N / SZ);                     \
-    buffer<ushort##SZ> d_buf((ushort##SZ *)&d[0], N / SZ);                     \
-    q.submit([&](handler &cgh) {                                               \
-      auto A = a_buf.get_access<access::mode::read>(cgh);                      \
-      auto B = b_buf.get_access<access::mode::read>(cgh);                      \
-      auto C = c_buf.get_access<access::mode::read>(cgh);                      \
-      auto D = d_buf.get_access<access::mode::write>(cgh);                     \
-      cgh.parallel_for(N / SZ, [=](id<1> index) {                              \
-        D[index] = NAME(A[index], B[index], C[index]);                         \
-      });                                                                      \
-    });                                                                        \
-  }                                                                            \
-  for (int i = 0; i < N; i++) {                                                \
-    assert(compare_fma_relu_bf16(a[i], b[i], c[i], d[i]));                     \
-  }
-
-#define TEST_BUILTIN_BF16_VEC3_IMPL(NAME)                                      \
-  {                                                                            \
-    buffer<ushort3> a_buf((ushort3 *)&a[0], N / 4);                            \
-    buffer<ushort3> b_buf((ushort3 *)&b[0], N / 4);                            \
-    buffer<ushort3> c_buf((ushort3 *)&c[0], N / 4);                            \
-    buffer<ushort3> d_buf((ushort3 *)&d[0], N / 4);                            \
-    q.submit([&](handler &cgh) {                                               \
-      auto A = a_buf.get_access<access::mode::read>(cgh);                      \
-      auto B = b_buf.get_access<access::mode::read>(cgh);                      \
-      auto C = c_buf.get_access<access::mode::read>(cgh);                      \
-      auto D = d_buf.get_access<access::mode::write>(cgh);                     \
-      cgh.parallel_for(N / 4, [=](id<1> index) {                               \
-        D[index] = NAME(A[index], B[index], C[index]);                         \
-      });                                                                      \
-    });                                                                        \
-  }                                                                            \
-  for (int i = 0; i < N; i++) {                                                \
-    if (i % 4 != 3) {                                                          \
-      assert(compare_fma_relu_bf16(a[i], b[i], c[i], d[i]));                   \
-    }                                                                          \
   }
 
 #define TEST_BUILTIN_BF16X2_SCAL_IMPL(NAME)                                    \
@@ -261,15 +225,28 @@ int main() {
     TEST_BUILTIN(sycl::ext::oneapi::experimental::fma_relu, HALF);
   }
 
-  // BF16, BF16X2 tests
+  // BF16
   {
-    std::vector<uint16_t> a(N), b(N), c(N), d(N);
+    std::vector<bfloat16> a(N), b(N), c(N), d(N);
     for (int i = 0; i < N; i++) {
       a[i] = make_bf16(i / (float)N);
       b[i] = make_bf16((N - i) / (float)N);
       c[i] = make_bf16(-i / 4 / (float)N);
     }
-    TEST_BUILTIN(sycl::ext::oneapi::experimental::fma_relu, BF16);
+    TEST_BUILTIN_BF16_SCAL_IMPL(fma_relu);
+  }
+
+  // BF16X2
+  {
+    std::vector<uint16_t> a(N), b(N), c(N), d(N);
+    for (int i = 0; i < N; i++) {
+      auto tmp = make_bf16(i / (float)N);
+      a[i] = reinterpret_cast<uint16_t &>(tmp);
+      tmp = make_bf16((N - i) / (float)N);
+      b[i] = reinterpret_cast<uint16_t &>(tmp);
+      tmp = make_bf16(-i / 4 / (float)N);
+      c[i] = reinterpret_cast<uint16_t &>(tmp);
+    }
     TEST_BUILTIN(sycl::ext::oneapi::experimental::fma_relu, BF16X2);
   }
 }
