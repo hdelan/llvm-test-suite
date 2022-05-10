@@ -166,8 +166,8 @@ void test() {
             // Convert values if using tf32
             if constexpr (std::is_same<T3, precision::tf32>::value) {
               for (auto i = 0; i < 4; ++i) {
-                sub_a.data[i] = float_to_tf32(sub_a.data[i]);
-                sub_b.data[i] = float_to_tf32(sub_b.data[i]);
+                sub_a.data[i] = round_to_tf32(sub_a.data[i]);
+                sub_b.data[i] = round_to_tf32(sub_b.data[i]);
               }
             }
 
