@@ -25,8 +25,8 @@ template <template <typename> typename test_struct> struct test_cases {
 
     for (auto &test_value : test_values) {
       test_passes &= test_valid_types<test_struct>(
-          Q, test_value.first.re, test_value.first.im,
-          test_value.second.re, test_value.second.im);
+          Q, test_value.first.re, test_value.first.im, test_value.second.re,
+          test_value.second.im);
     }
 
     if (!test_passes)
@@ -85,12 +85,13 @@ template <> const char *test_cases<test_div>::test_name = "division test";
 
 // test_add_assign
 template <>
-vector<pair<cmplx<double>, cmplx<double>>> test_cases<test_add_assign>::test_values = {
-    pair(cmplx(-1, 1), cmplx(1, 1)),  pair(cmplx(-1, 1), cmplx(-1, 1)),
-    pair(cmplx(-1, 1), cmplx(1, -1)), pair(cmplx(-1, 1), cmplx(-1, -1)),
+vector<pair<cmplx<double>, cmplx<double>>>
+    test_cases<test_add_assign>::test_values = {
+        pair(cmplx(-1, 1), cmplx(1, 1)),  pair(cmplx(-1, 1), cmplx(-1, 1)),
+        pair(cmplx(-1, 1), cmplx(1, -1)), pair(cmplx(-1, 1), cmplx(-1, -1)),
 
-    pair(cmplx(1, 1), cmplx(-1, 1)),  pair(cmplx(-1, 1), cmplx(-1, 1)),
-    pair(cmplx(1, -1), cmplx(-1, 1)), pair(cmplx(-1, -1), cmplx(-1, 1)),
+        pair(cmplx(1, 1), cmplx(-1, 1)),  pair(cmplx(-1, 1), cmplx(-1, 1)),
+        pair(cmplx(1, -1), cmplx(-1, 1)), pair(cmplx(-1, -1), cmplx(-1, 1)),
 };
 
 template <>
@@ -98,12 +99,13 @@ const char *test_cases<test_add_assign>::test_name = "addition assign test";
 
 // test_sub_assign
 template <>
-vector<pair<cmplx<double>, cmplx<double>>> test_cases<test_sub_assign>::test_values = {
-    pair(cmplx(-1, 1), cmplx(1, 1)),  pair(cmplx(-1, 1), cmplx(-1, 1)),
-    pair(cmplx(-1, 1), cmplx(1, -1)), pair(cmplx(-1, 1), cmplx(-1, -1)),
+vector<pair<cmplx<double>, cmplx<double>>>
+    test_cases<test_sub_assign>::test_values = {
+        pair(cmplx(-1, 1), cmplx(1, 1)),  pair(cmplx(-1, 1), cmplx(-1, 1)),
+        pair(cmplx(-1, 1), cmplx(1, -1)), pair(cmplx(-1, 1), cmplx(-1, -1)),
 
-    pair(cmplx(1, 1), cmplx(-1, 1)),  pair(cmplx(-1, 1), cmplx(-1, 1)),
-    pair(cmplx(1, -1), cmplx(-1, 1)), pair(cmplx(-1, -1), cmplx(-1, 1)),
+        pair(cmplx(1, 1), cmplx(-1, 1)),  pair(cmplx(-1, 1), cmplx(-1, 1)),
+        pair(cmplx(1, -1), cmplx(-1, 1)), pair(cmplx(-1, -1), cmplx(-1, 1)),
 };
 
 template <>
@@ -111,12 +113,13 @@ const char *test_cases<test_sub_assign>::test_name = "subtraction assign test";
 
 // test_mul_assign
 template <>
-vector<pair<cmplx<double>, cmplx<double>>> test_cases<test_mul_assign>::test_values = {
-    pair(cmplx(-1, 1), cmplx(1, 1)),  pair(cmplx(-1, 1), cmplx(-1, 1)),
-    pair(cmplx(-1, 1), cmplx(1, -1)), pair(cmplx(-1, 1), cmplx(-1, -1)),
+vector<pair<cmplx<double>, cmplx<double>>>
+    test_cases<test_mul_assign>::test_values = {
+        pair(cmplx(-1, 1), cmplx(1, 1)),  pair(cmplx(-1, 1), cmplx(-1, 1)),
+        pair(cmplx(-1, 1), cmplx(1, -1)), pair(cmplx(-1, 1), cmplx(-1, -1)),
 
-    pair(cmplx(1, 1), cmplx(-1, 1)),  pair(cmplx(-1, 1), cmplx(-1, 1)),
-    pair(cmplx(1, -1), cmplx(-1, 1)), pair(cmplx(-1, -1), cmplx(-1, 1)),
+        pair(cmplx(1, 1), cmplx(-1, 1)),  pair(cmplx(-1, 1), cmplx(-1, 1)),
+        pair(cmplx(1, -1), cmplx(-1, 1)), pair(cmplx(-1, -1), cmplx(-1, 1)),
 };
 
 template <>
@@ -125,12 +128,13 @@ const char *test_cases<test_mul_assign>::test_name =
 
 // test_div_assign
 template <>
-vector<pair<cmplx<double>, cmplx<double>>> test_cases<test_div_assign>::test_values = {
-    pair(cmplx(-1, 1), cmplx(1, 1)),  pair(cmplx(-1, 1), cmplx(-1, 1)),
-    pair(cmplx(-1, 1), cmplx(1, -1)), pair(cmplx(-1, 1), cmplx(-1, -1)),
+vector<pair<cmplx<double>, cmplx<double>>>
+    test_cases<test_div_assign>::test_values = {
+        pair(cmplx(-1, 1), cmplx(1, 1)),  pair(cmplx(-1, 1), cmplx(-1, 1)),
+        pair(cmplx(-1, 1), cmplx(1, -1)), pair(cmplx(-1, 1), cmplx(-1, -1)),
 
-    pair(cmplx(1, 1), cmplx(-1, 1)),  pair(cmplx(-1, 1), cmplx(-1, 1)),
-    pair(cmplx(1, -1), cmplx(-1, 1)), pair(cmplx(-1, -1), cmplx(-1, 1)),
+        pair(cmplx(1, 1), cmplx(-1, 1)),  pair(cmplx(-1, 1), cmplx(-1, 1)),
+        pair(cmplx(1, -1), cmplx(-1, 1)), pair(cmplx(-1, -1), cmplx(-1, 1)),
 };
 
 template <>

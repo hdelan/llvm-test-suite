@@ -77,7 +77,7 @@ test_op(test_div, /);
           cplx_inout[0], std::complex<T>(std_inout.real(), std_inout.imag()),  \
           /*is_device*/ false);                                                \
                                                                                \
-      sycl::free(cplx_inout, Q);                                                \
+      sycl::free(cplx_inout, Q);                                               \
                                                                                \
       return pass;                                                             \
     }                                                                          \

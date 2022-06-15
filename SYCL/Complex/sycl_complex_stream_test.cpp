@@ -63,7 +63,8 @@ int main() {
   // CHECK: (1.5,-1)
   // CHECK: (1.5,-1)
   // CHECK: (1.5,-1)
-  test_passes &= test_valid_types<test_sycl_stream_operator>(Q, cmplx(1.5, -1.0));
+  test_passes &=
+      test_valid_types<test_sycl_stream_operator>(Q, cmplx(1.5, -1.0));
   // CHECK: (inf,inf)
   // CHECK: (inf,inf)
   // CHECK: (inf,inf)
@@ -72,14 +73,17 @@ int main() {
   // CHECK: (nan,nan)
   // CHECK: (nan,nan)
   // CHECK: (nan,nan)
-  test_passes &= test_valid_types<test_sycl_stream_operator>(Q, cmplx(NAN, NAN));
+  test_passes &=
+      test_valid_types<test_sycl_stream_operator>(Q, cmplx(NAN, NAN));
 
   test_passes &= test_valid_types<test_ostream_operator>(cmplx(1.5, -1.0));
-  test_passes &= test_valid_types<test_ostream_operator>(cmplx(INFINITY, INFINITY));
+  test_passes &=
+      test_valid_types<test_ostream_operator>(cmplx(INFINITY, INFINITY));
   test_passes &= test_valid_types<test_ostream_operator>(cmplx(NAN, NAN));
 
   test_passes &= test_valid_types<test_istream_operator>(cmplx(1.5, -1.0));
-  test_passes &= test_valid_types<test_istream_operator>(cmplx(INFINITY, INFINITY));
+  test_passes &=
+      test_valid_types<test_istream_operator>(cmplx(INFINITY, INFINITY));
   test_passes &= test_valid_types<test_istream_operator>(cmplx(NAN, NAN));
 
   if (!test_passes)
