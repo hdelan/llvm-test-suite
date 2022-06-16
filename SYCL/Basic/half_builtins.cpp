@@ -1,4 +1,4 @@
-// RUN: %clangxx -fsycl -fsycl-targets=%sycl_triple %s -o %t.out
+// RUN: %clangxx -fsycl -fsycl-targets=%sycl_triple -fsycl-device-code-split=per_kernel %s -o %t.out
 // RUN: %HOST_RUN_PLACEHOLDER %t.out
 // RUN: %CPU_RUN_PLACEHOLDER %t.out
 // RUN: %GPU_RUN_PLACEHOLDER %t.out
@@ -166,34 +166,40 @@ template <int N> bool check(vec<float, N> a, vec<float, N> b) {
 
 int main() {
   queue q;
-  if (q.get_device().has(sycl::aspect::fp16)) {
-    float16 a, b, c, d;
-    for (int i = 0; i < SZ_max; i++) {
-      a[i] = i / (float)SZ_max;
-      b[i] = (SZ_max - i) / (float)SZ_max;
-      c[i] = (float)(3 * i);
-    }
-    int err = 0;
-    {
-      buffer<float16> a_buf(&a, 1);
-      buffer<float16> b_buf(&b, 1);
-      buffer<float16> c_buf(&c, 1);
-      buffer<int> err_buf(&err, 1);
-      q.submit([&](handler &cgh) {
-        auto A = a_buf.get_access<access::mode::read>(cgh);
-        auto B = b_buf.get_access<access::mode::read>(cgh);
-        auto C = c_buf.get_access<access::mode::read>(cgh);
-        auto err = err_buf.get_access<access::mode::write>(cgh);
-        cgh.parallel_for(SZ_max, [=](item<1> index) {
-          size_t i = index.get_id(0);
-          TEST_BUILTIN_1(fabs);
-          TEST_BUILTIN_2(fmin);
-          TEST_BUILTIN_2(fmax);
-          TEST_BUILTIN_3(fma);
-        });
-      });
-    }
-    assert(err == 0);
+
+  if (!q.get_device().has(sycl::aspect::fp16)) {
+    std::cout << "skipping fp16 tests: requires fp16 device aspect."
+              << std::endl;
+    return 0;
   }
+
+  float16 a, b, c, d;
+  for (int i = 0; i < SZ_max; i++) {
+    a[i] = i / (float)SZ_max;
+    b[i] = (SZ_max - i) / (float)SZ_max;
+    c[i] = (float)(3 * i);
+  }
+  int err = 0;
+  {
+    buffer<float16> a_buf(&a, 1);
+    buffer<float16> b_buf(&b, 1);
+    buffer<float16> c_buf(&c, 1);
+    buffer<int> err_buf(&err, 1);
+    q.submit([&](handler &cgh) {
+      auto A = a_buf.get_access<access::mode::read>(cgh);
+      auto B = b_buf.get_access<access::mode::read>(cgh);
+      auto C = c_buf.get_access<access::mode::read>(cgh);
+      auto err = err_buf.get_access<access::mode::write>(cgh);
+      cgh.parallel_for(SZ_max, [=](item<1> index) {
+        size_t i = index.get_id(0);
+        TEST_BUILTIN_1(fabs);
+        TEST_BUILTIN_2(fmin);
+        TEST_BUILTIN_2(fmax);
+        TEST_BUILTIN_3(fma);
+      });
+    });
+  }
+  assert(err == 0);
+
   return 0;
 }
