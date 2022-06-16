@@ -1,5 +1,5 @@
-#include <sycl/sycl.hpp>
 #include <cassert>
+#include <sycl/sycl.hpp>
 
 template <typename T, size_t N>
 void assert_out_of_bound(sycl::marray<T, N> val, sycl::marray<T, N> lower,
