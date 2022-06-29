@@ -241,7 +241,5 @@ int main() {
     test_passes &= test(Q);
   }
 
-  assert(test_passes);
-
-  return test_passes;
+  return !test_passes;
 }

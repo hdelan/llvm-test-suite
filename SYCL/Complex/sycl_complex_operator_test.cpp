@@ -134,4 +134,6 @@ int main() {
     test_cases<test_div_assign> test;
     test_passes &= test(Q);
   }
+
+  return !test_passes;
 }

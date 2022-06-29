@@ -265,7 +265,5 @@ int main() {
   if (!test_passes)
     std::cerr << "pow test failed\n";
 
-  assert(test_passes);
-
-  return test_passes;
+  return !test_passes;
 }
