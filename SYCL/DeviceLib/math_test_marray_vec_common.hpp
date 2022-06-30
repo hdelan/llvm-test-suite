@@ -32,7 +32,7 @@ template <typename T, size_t N> bool checkEqual(marray<T, N> A, size_t B) {
       deviceQueue.submit([&](handler &cgh) {                                   \
         accessor<T, 1, access::mode::write, target::device> res_access(        \
             buffer1, cgh);                                                     \
-        accessor<T, 1, access::mode::write, target::device> input_access(      \
+        accessor<T, 1, access::mode::read, target::device> input_access(       \
             buffer2, cgh);                                                     \
         cgh.single_task<TypeHelper<class a##NAME, T>>(                         \
             [=]() { res_access[0] = NAME(input_access[0]); });                 \
@@ -93,9 +93,9 @@ OPERATOR(trunc)
       deviceQueue.submit([&](handler &cgh) {                                   \
         accessor<T, 1, access::mode::write, target::device> res_access(        \
             buffer1, cgh);                                                     \
-        accessor<T, 1, access::mode::write, target::device> input1_access(     \
+        accessor<T, 1, access::mode::read, target::device> input1_access(      \
             buffer2, cgh);                                                     \
-        accessor<T, 1, access::mode::write, target::device> input2_access(     \
+        accessor<T, 1, access::mode::read, target::device> input2_access(      \
             buffer3, cgh);                                                     \
         cgh.single_task<TypeHelper<class a##NAME, T>>([=]() {                  \
           res_access[0] = NAME(input1_access[0], input2_access[0]);            \
@@ -134,11 +134,11 @@ OPERATOR_2(remainder)
       deviceQueue.submit([&](handler &cgh) {                                   \
         accessor<T, 1, access::mode::write, target::device> res_access(        \
             buffer1, cgh);                                                     \
-        accessor<T, 1, access::mode::write, target::device> input1_access(     \
+        accessor<T, 1, access::mode::read, target::device> input1_access(      \
             buffer2, cgh);                                                     \
-        accessor<T, 1, access::mode::write, target::device> input2_access(     \
+        accessor<T, 1, access::mode::read, target::device> input2_access(      \
             buffer3, cgh);                                                     \
-        accessor<T, 1, access::mode::write, target::device> input3_access(     \
+        accessor<T, 1, access::mode::read, target::device> input3_access(      \
             buffer4, cgh);                                                     \
         cgh.single_task<TypeHelper<class a##NAME, T>>([=]() {                  \
           res_access[0] =                                                      \

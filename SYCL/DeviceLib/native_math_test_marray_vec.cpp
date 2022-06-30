@@ -39,7 +39,7 @@ template <typename T, size_t N> bool checkEqual(marray<T, N> A, size_t B) {
       deviceQueue.submit([&](handler &cgh) {                                   \
         accessor<T, 1, access::mode::write, target::device> res_access(        \
             buffer1, cgh);                                                     \
-        accessor<T, 1, access::mode::write, target::device> input_access(      \
+        accessor<T, 1, access::mode::read, target::device> input_access(       \
             buffer2, cgh);                                                     \
         cgh.single_task<TypeHelper<class native##NAME, T>>(                    \
             [=]() { res_access[0] = sycl::native::NAME(input_access[0]); });   \
@@ -74,9 +74,9 @@ NATIVE_OPERATOR(recip)
       deviceQueue.submit([&](handler &cgh) {                                   \
         accessor<T, 1, access::mode::write, target::device> res_access(        \
             buffer1, cgh);                                                     \
-        accessor<T, 1, access::mode::write, target::device> input1_access(     \
+        accessor<T, 1, access::mode::read, target::device> input1_access(      \
             buffer2, cgh);                                                     \
-        accessor<T, 1, access::mode::write, target::device> input2_access(     \
+        accessor<T, 1, access::mode::read, target::device> input2_access(      \
             buffer3, cgh);                                                     \
         cgh.single_task<TypeHelper<class native2##NAME, T>>([=]() {            \
           res_access[0] =                                                      \
