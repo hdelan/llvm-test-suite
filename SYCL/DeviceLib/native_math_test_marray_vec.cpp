@@ -104,8 +104,6 @@ template <typename T> void native_tests_3(queue &deviceQueue) {
   native_math_test_sqrt(deviceQueue, T{-1, -1, -1}, T{4, 4, 4}, 2);
   native_math_test_rsqrt(deviceQueue, T{-1, -1, -1}, T{0.25, 0.25, 0.25}, 2);
   native_math_test_recip(deviceQueue, T{-1, -1, -1}, T{0.25, 0.25, 0.25}, 4);
-  native_math_test_2_powr(deviceQueue, T{-1, -1, -1}, T{2, 2, 2}, T{2, 2, 2},
-                          4);
   native_math_test_2_divide(deviceQueue, T{-1, -1, -1}, T{4, 4, 4}, T{2, 2, 2},
                             2);
 }
