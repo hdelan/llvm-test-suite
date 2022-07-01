@@ -99,7 +99,6 @@ template <typename T> void half_precision_math_tests_3(queue &deviceQueue) {
   half_precision_math_test_cos(deviceQueue, T{-1, -1, -1}, T{0, 0, 0}, 1);
   half_precision_math_test_exp(deviceQueue, T{-1, -1, -1}, T{0, 0, 0}, 1);
   half_precision_math_test_exp2(deviceQueue, T{-1, -1, -1}, T{2, 2, 2}, 4);
-  half_precision_math_test_exp10(deviceQueue, T{-1, -1, -1}, T{2, 2, 2}, 100);
   half_precision_math_test_log(deviceQueue, T{-1, -1, -1}, T{1, 1, 1}, 0);
   half_precision_math_test_log2(deviceQueue, T{-1, -1, -1}, T{4, 4, 4}, 2);
   half_precision_math_test_log10(deviceQueue, T{-1, -1, -1}, T{100, 100, 100},
