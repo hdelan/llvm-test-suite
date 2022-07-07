@@ -166,6 +166,13 @@ template <int N> bool check(vec<float, N> a, vec<float, N> b) {
 
 int main() {
   queue q;
+
+  if (!q.get_device().has(sycl::aspect::fp16)) {
+    std::cout << "skipping fp16 tests: requires fp16 device aspect."
+              << std::endl;
+    return 0;
+  }
+
   float16 a, b, c, d;
   for (int i = 0; i < SZ_max; i++) {
     a[i] = i / (float)SZ_max;
