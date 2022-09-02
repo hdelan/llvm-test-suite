@@ -22,7 +22,7 @@
 #include <string>
 #include <vector>
 
-using namespace cl::sycl;
+using namespace sycl;
 
 namespace esimd_test {
 
@@ -520,6 +520,22 @@ template <class F, class OpClass, OpClass... Ops>
 inline void iterate_ops(OpSeq<OpClass, Ops...> ops, F f) {
   IterateOpAction<F, OpClass, Ops...> act(f);
   ConstexprForLoop<0, sizeof...(Ops)>::unroll(act);
+}
+
+struct USMDeleter {
+  queue Q;
+  void operator()(void *Ptr) {
+    if (Ptr) {
+      sycl::free(Ptr, Q);
+    }
+  }
+};
+
+template <class T>
+std::unique_ptr<T, USMDeleter> usm_malloc_shared(queue q, int n) {
+  std::unique_ptr<T, USMDeleter> res(sycl::malloc_shared<T>(n, q),
+                                     USMDeleter{q});
+  return std::move(res);
 }
 
 } // namespace esimd_test

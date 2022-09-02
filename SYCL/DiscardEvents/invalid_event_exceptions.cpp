@@ -1,6 +1,3 @@
-// UNSUPPORTED: windows || linux
-//   temporarily disabled
-
 // RUN: %clangxx -fsycl -fsycl-targets=%sycl_triple %s -o %t.out
 //
 // RUN: %HOST_RUN_PLACEHOLDER %t.out
@@ -15,11 +12,11 @@
 // they do it.
 // 3. An attempt to pass discarded event into depends_on throws an exception.
 
-#include <CL/sycl.hpp>
 #include <cassert>
 #include <iostream>
+#include <sycl/sycl.hpp>
 
-using namespace cl::sycl;
+using namespace sycl;
 
 void DiscardedEventWaitExceptionHelper(
     const std::function<void()> &FunctionToTry) {
