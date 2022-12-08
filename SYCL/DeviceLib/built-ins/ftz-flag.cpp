@@ -11,10 +11,7 @@ using namespace sycl;
 
 constexpr float eps = 1e-6;
 
-template <typename T>
-bool checkClose(T A, T B) {
-  return ((A - B) / A) < eps;
-}
+template <typename T> bool checkClose(T A, T B) { return ((A - B) / A) < eps; }
 
 #define __TEST_FFMATH_UNARY(func)                                              \
   template <typename T> void test_ffmath_##func(queue &deviceQueue) {          \
