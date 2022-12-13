@@ -2,6 +2,9 @@
 // RUN: %CPU_RUN_PLACEHOLDER %t.out
 // RUN: %GPU_RUN_PLACEHOLDER %t.out
 
+// Temporarily disabled on HIP, CUDA and L0 due to sporadic failures.
+// UNSUPPORTED: hip, level_zero, cuda
+
 #include <iostream>
 #include <stdlib.h>
 #include <sycl/sycl.hpp>

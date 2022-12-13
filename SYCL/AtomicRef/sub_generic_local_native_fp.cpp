@@ -3,16 +3,9 @@
 // RUN: %CPU_RUN_PLACEHOLDER %t.out
 // RUN: %ACC_RUN_PLACEHOLDER %t.out
 
-<<<<<<< HEAD
-// CUDA and HIP backends have had no support for the generic address space yet.
+// HIP backend have had no support for the generic address space yet.
 // HIP does not support native floating point atomics
-// XFAIL: cuda, hip
-=======
-// HIP backend has no support for the generic address space yet.
-// Host does not support barrier. HIP does not support native floating point
-// atomics
-// XFAIL: hip, host
->>>>>>> Tadej/cuda_generic_atomics
+// XFAIL: hip
 
 #define SYCL_USE_NATIVE_FP_ATOMICS
 #define FP_TESTS_ONLY

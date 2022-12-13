@@ -3,7 +3,7 @@
 // RUN: %CPU_RUN_PLACEHOLDER %t.out
 // RUN: %ACC_RUN_PLACEHOLDER %t.out
 
-// HIP backend has no support for the generic address space yet
+// HIP backend have had no support for the generic address space yet
 // XFAIL: hip
 
 #include "sub.h"
