@@ -2,9 +2,9 @@
 // RUN: %GPU_RUN_PLACEHOLDER %t.out
 // RUN: %CPU_RUN_PLACEHOLDER %t.out
 // RUN: %ACC_RUN_PLACEHOLDER %t.out
-
-// HIP does not support floating point atomics.
-// UNSUPPORTED: hip
+//
+// TODO: Max, Min need to be supported for fp32 in HIP
+// XFAIL: hip
 
 #include "max.h"
 

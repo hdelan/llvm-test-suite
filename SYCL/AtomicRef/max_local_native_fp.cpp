@@ -2,8 +2,8 @@
 // RUN: %GPU_RUN_PLACEHOLDER %t.out
 // RUN: %CPU_RUN_PLACEHOLDER %t.out
 // RUN: %ACC_RUN_PLACEHOLDER %t.out
-
-// HIP does not support native floating point atomics
+//
+// TODO: Max, Min need to be supported for fp32 in HIP
 // XFAIL: hip
 
 #define SYCL_USE_NATIVE_FP_ATOMICS
