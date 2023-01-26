@@ -2,9 +2,6 @@
 // RUN: %GPU_RUN_PLACEHOLDER %t.out
 // RUN: %CPU_RUN_PLACEHOLDER %t.out
 // RUN: %ACC_RUN_PLACEHOLDER %t.out
-//
-// TODO: Max, Min need to be supported for fp32 in HIP
-// XFAIL: hip
 
 #include "min.h"
 
